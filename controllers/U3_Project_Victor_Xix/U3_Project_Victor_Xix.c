@@ -31,42 +31,68 @@ double b2=0; // Posicion incial en 0
 double b3=0;
 int times=0;
 int times2=0;
-int pressed_key;
-int n=1;
+int key;
+int a=1;
 int m=0;
+double a1, a2,a3;
+float Buzz = 0;
+int turn_left = 0;
+int turn_right = 0;
+double d1,d2;// Variables para el sensor de distancia
 
-//double pos_final;
-//double ObsSen_Pos;
-void goRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
-  wb_motor_set_velocity(wheel_1, 3);
+
+ void goRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+  wb_motor_set_velocity(wheel_1, -3);
   wb_motor_set_velocity(wheel_2, 3);
   wb_motor_set_velocity(wheel_3, 0);
   wb_motor_set_position(wheel_1, INFINITY);
 
   }
-void downRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
-  wb_motor_set_velocity(wheel_1,-3);
+ void downRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+  wb_motor_set_velocity(wheel_1,3);
   wb_motor_set_velocity(wheel_2,-3);
   wb_motor_set_velocity(wheel_3, 0);
   }
-void leftRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+ void leftRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
   wb_motor_set_velocity(wheel_1, -3);
+  wb_motor_set_velocity(wheel_2, -3);
+  wb_motor_set_velocity(wheel_3, 6.1);
+  }
+ void rightRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+  wb_motor_set_velocity(wheel_1, 3);
   wb_motor_set_velocity(wheel_2, 3);
-  wb_motor_set_velocity(wheel_3, 0);
+  wb_motor_set_velocity(wheel_3, -6.1);
   }
-void rightRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
-  wb_motor_set_velocity(wheel_1, 0);
-  wb_motor_set_velocity(wheel_2, 0);
-  wb_motor_set_velocity(wheel_3, 0);
-  }
-void stopRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+ void stopRobot(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
   wb_motor_set_velocity(wheel_1,0);
   wb_motor_set_velocity(wheel_2,0);
   wb_motor_set_velocity(wheel_3,0);
   }
-
-
-
+ void turnRight(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+  wb_motor_set_velocity(wheel_1,-3);
+  wb_motor_set_velocity(wheel_2,-3);
+  wb_motor_set_velocity(wheel_3,-3);
+  }
+ void turnLeft(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+    wb_motor_set_velocity(wheel_1,3);
+    wb_motor_set_velocity(wheel_2,3);
+    wb_motor_set_velocity(wheel_3,3);
+  }
+ void goAuto(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+    wb_motor_set_velocity(wheel_1,-1);
+    wb_motor_set_velocity(wheel_2,1);
+    wb_motor_set_velocity(wheel_3,0);
+  }
+ void turnrAuto(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+    wb_motor_set_velocity(wheel_1,1);
+    wb_motor_set_velocity(wheel_2,1);
+    wb_motor_set_velocity(wheel_3,1);
+  }
+ void turnlAuto(WbDeviceTag wheel_1,WbDeviceTag wheel_2,WbDeviceTag wheel_3){
+    wb_motor_set_velocity(wheel_1,-1);
+    wb_motor_set_velocity(wheel_2,-1);
+    wb_motor_set_velocity(wheel_3,-1);
+  }
 
 
 /*
@@ -78,7 +104,6 @@ int main(int argc, char **argv){
   /* necessary to initialize webots stuff */
   wb_robot_init();
   wb_keyboard_enable(TIME_STEP);
-  //wb_keyboard_enable(TIME_STEP);
 
 
   /*
@@ -104,6 +129,16 @@ int main(int argc, char **argv){
    wb_position_sensor_enable(ps_2, TIME_STEP);
    wb_position_sensor_enable(ps_3, TIME_STEP);
 
+   WbDeviceTag ds_r1 = wb_robot_get_device("distance_sensor1");
+   WbDeviceTag ds_r2 = wb_robot_get_device("distance_sensor2");
+
+   wb_distance_sensor_enable(ds_r1, TIME_STEP);
+   wb_distance_sensor_enable(ds_r2, TIME_STEP);
+
+
+   d1=(wb_distance_sensor_get_value(ds_r1)*0.2)/65535;
+   d2=(wb_distance_sensor_get_value(ds_r2)*0.2)/65535;
+
    void automatic(){
      WbDeviceTag ds_r1 = wb_robot_get_device("distance_sensor1");
      WbDeviceTag ds_r2 = wb_robot_get_device("distance_sensor2");
@@ -111,28 +146,17 @@ int main(int argc, char **argv){
      wb_distance_sensor_enable(ds_r1, TIME_STEP);
      wb_distance_sensor_enable(ds_r2, TIME_STEP);
 
-     double d1,d2;// Variables para el sensor de distancia
-
      d1=(wb_distance_sensor_get_value(ds_r1)*0.2)/65535;
      d2=(wb_distance_sensor_get_value(ds_r2)*0.2)/65535;
 
-     wb_motor_set_position(wheel_1, INFINITY);
-     wb_motor_set_velocity(wheel_1, -1);
-     wb_motor_set_position(wheel_2, INFINITY);
-     wb_motor_set_velocity(wheel_2, 1);
-     wb_motor_set_position(wheel_3, INFINITY);
-     wb_motor_set_velocity(wheel_3, 0);
+
+     goAuto( wheel_1, wheel_2, wheel_3);
 
      if (d1<= 0.17 && d1<d2){
        times++;
      }
      if (times>=1 && times<=58){
-     wb_motor_set_position(wheel_1, INFINITY);
-     wb_motor_set_velocity(wheel_1, 1);
-     wb_motor_set_position(wheel_2, INFINITY);
-     wb_motor_set_velocity(wheel_2, 1);
-     wb_motor_set_position(wheel_3, INFINITY);
-     wb_motor_set_velocity(wheel_3, 1);
+     turnlAuto( wheel_1, wheel_2, wheel_3);
      times++;
      }
      else {
@@ -144,12 +168,7 @@ int main(int argc, char **argv){
      }
 
      if(times2 >=1 && times2<=58){
-     wb_motor_set_position(wheel_1, INFINITY);
-     wb_motor_set_velocity(wheel_1, -1);
-     wb_motor_set_position(wheel_2, INFINITY);
-     wb_motor_set_velocity(wheel_2, -1);
-     wb_motor_set_position(wheel_3, INFINITY);
-     wb_motor_set_velocity(wheel_3, -1);
+     turnrAuto( wheel_1, wheel_2, wheel_3);
      times2++;
      }
      else{
@@ -158,68 +177,61 @@ int main(int argc, char **argv){
    }
    void manual(){
 
-        if(pressed_key == WB_KEYBOARD_UP){
+        if(key == WB_KEYBOARD_UP){
           goRobot( wheel_1, wheel_2, wheel_3);
 
         }
-        else if(pressed_key == WB_KEYBOARD_DOWN){
+        else if(key == WB_KEYBOARD_DOWN){
           downRobot( wheel_1, wheel_2, wheel_3);
 
         }
-        else if(pressed_key == WB_KEYBOARD_LEFT){
+        else if(key == WB_KEYBOARD_LEFT){
           leftRobot(wheel_1,wheel_2,wheel_3);
 
         }
-        else if(pressed_key == WB_KEYBOARD_RIGHT){
+        else if(key == WB_KEYBOARD_RIGHT){
           rightRobot(wheel_1,wheel_2,wheel_3);
 
         }
-       /* else if(pressed_key == 'S' ){
-          Comparador = Encoder1 + 0.785398; //.75 = 45 degrees to the left
+        else if(key == 'S' ){
+          Buzz = a1 + 0.785398; //.75 = 45 degrees to the left
           turn_left = 1;
         }
 
         else if(turn_left == 1){
 
-          if(Encoder1 <= Comparador){
-          wb_motor_set_velocity(wheel_left, 5);
-          wb_motor_set_velocity(wheel_right, 5);
-          wb_motor_set_velocity(wheel_back, 5);
+          if(a1 <= Buzz){
+          turnLeft(wheel_1,wheel_2,wheel_3);
         }
         else{
-          wb_motor_set_velocity(wheel_left, 0);
-          wb_motor_set_velocity(wheel_right, 0);
-          wb_motor_set_velocity(wheel_back, 0);
+          stopRobot(wheel_1,wheel_2,wheel_3);
+
           turn_left = 0;
         }
 
       }
 
-        else if(pressed_key == 'A' ){
-        Comparador = Encoder1 - 0.785398; // 45 degrees to the right
+        else if(key == 'A' ){
+        Buzz = a1 - 0.785398; // 45 degrees to the right
         turn_right = 1;
 
         }
          else if(turn_right == 1){
 
-          if(Encoder1 >= Comparador){
-          wb_motor_set_velocity(wheel_left, -5);
-          wb_motor_set_velocity(wheel_right, -5);
-          wb_motor_set_velocity(wheel_back, -5);
+          if(a1 >= Buzz){
+          turnRight(wheel_1,wheel_2,wheel_3);
+
         }
         else{
-          wb_motor_set_velocity(wheel_left, 0);
-          wb_motor_set_velocity(wheel_right, 0);
-          wb_motor_set_velocity(wheel_back, 0);
+          stopRobot(wheel_1,wheel_2,wheel_3);
+
           turn_right = 0;
         }
 
         }
         else{
-          wb_motor_set_velocity(wheel_left, 0);
-          wb_motor_set_velocity(wheel_right, 0);
-          wb_motor_set_velocity(wheel_back, 0);
-        }*/
+          stopRobot(wheel_1,wheel_2,wheel_3);
+        }
    }
 
 
@@ -230,7 +242,6 @@ int main(int argc, char **argv){
   while (wb_robot_step(TIME_STEP) != -1) {
 
   double pos_final1, pos_final2,pos_final3; //posiciones finales
-  double a1, a2,a3;//posiciones actuales
   double RPM_1, RPM_2, RPM_3;
 
   ////rueda 1//////////////
@@ -261,17 +272,17 @@ int main(int argc, char **argv){
   linvel3=pos_final3*radio;
   linvel_rob=(linvel1+linvel2+linvel3)/3;
 
-  pressed_key = wb_keyboard_get_key();
+  key = wb_keyboard_get_key();
 
-  if(pressed_key == 'W'){
+  if(key == 'W'){
     m = 1;
-    n = 0;
+    a = 0;
     printf("Manual mode \n");
   }
 
-   if (pressed_key == 'G'){
-    n = 1;
+   if (key == 'G'){
     m = 0;
+    a = 1;
    printf("Automatic mode \n");
 
   }
@@ -279,12 +290,9 @@ int main(int argc, char **argv){
   if(m == 1){
   manual();
 }
-  if(n == 1){
+  if(a == 1){
   automatic();
   }
-
-
-
 
 
      printf("Wheel1:RW_RPM %f RPM\tWheel2:RW_RPM %f RPM\tWheel3:RW_RPM %f RPM\
@@ -304,7 +312,6 @@ int main(int argc, char **argv){
      * wb_differential_wheels_set_speed(100.0,100.0);
      */
   };
-
 
   /* Enter your cleanup code here */
 
