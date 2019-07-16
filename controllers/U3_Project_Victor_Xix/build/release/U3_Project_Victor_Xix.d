@@ -5,4 +5,4 @@ build/release/U3_Project_Victor_Xix.o: U3_Project_Victor_Xix.c \
  /usr/local/webots/include/controller/c/webots/distance_sensor.h \
  /usr/local/webots/include/controller/c/webots/position_sensor.h \
  /usr/local/webots/include/controller/c/webots/motor.h \
- /usr/local/webots/include/controller/c/webots/keyboard.h
+ /usr/local/webots/include/controller/c/webots/keyboard.h promedio.h

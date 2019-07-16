@@ -1,16 +1,3 @@
-/*
- * File:          U3_Project_Victor_Xix.c
- * Date:
- * Description:
- * Author:
- * Modifications:
- */
-
-/*
- * You may need to add include files like <webots/distance_sensor.h> or
- * <webots/differential_wheels.h>, etc.
- */
-
 #include <webots/robot.h>
 #include <webots/distance_sensor.h>
 #include <webots/position_sensor.h>
@@ -18,11 +5,9 @@
 #include <webots/keyboard.h>
 
 #include <stdio.h>
-#include <math.h>
-/*
 
- * You may want to add macros here.
- */
+#include <promedio.h>
+
 #define TIME_STEP 64
 #define PI 3.1416
 
@@ -31,9 +16,9 @@ double b2=0; // Posicion incial en 0
 double b3=0;
 int times=0;
 int times2=0;
-int key;
-int a=1;
-int m=0;
+int key;  // Variable para el teclado
+int a=1; //Variable modo automatico
+int m=0; //Variable modo Manual
 double a1, a2,a3;
 float Buzz = 0;
 int turn_left = 0;
@@ -95,23 +80,13 @@ double d1,d2;// Variables para el sensor de distancia
   }
 
 
-/*
- * This is the main program.
- * The arguments of the main function can be specified by the
- * "controllerArgs" field of the Robot node
- */
 int main(int argc, char **argv){
   /* necessary to initialize webots stuff */
   wb_robot_init();
   wb_keyboard_enable(TIME_STEP);
 
 
-  /*
-   * You should declare here WbDeviceTag variables for storing
-   * robot devices like this:
-   *  WbDeviceTag my_sensor = wb_robot_get_device("my_sensor");
-   *  WbDeviceTag my_actuator = wb_robot_get_device("my_actuator");
-   */
+
    WbDeviceTag wheel_1 = wb_robot_get_device("motor_1");
    WbDeviceTag wheel_2 = wb_robot_get_device("motor_2");
    WbDeviceTag wheel_3 = wb_robot_get_device("motor_3");
@@ -124,7 +99,6 @@ int main(int argc, char **argv){
    wb_motor_set_position(wheel_2,INFINITY);
    wb_motor_set_position(wheel_3,INFINITY);
 
-
    wb_position_sensor_enable(ps_1, TIME_STEP);
    wb_position_sensor_enable(ps_2, TIME_STEP);
    wb_position_sensor_enable(ps_3, TIME_STEP);
@@ -135,11 +109,10 @@ int main(int argc, char **argv){
    wb_distance_sensor_enable(ds_r1, TIME_STEP);
    wb_distance_sensor_enable(ds_r2, TIME_STEP);
 
-
    d1=(wb_distance_sensor_get_value(ds_r1)*0.2)/65535;
    d2=(wb_distance_sensor_get_value(ds_r2)*0.2)/65535;
 
-   void automatic(){
+  void automatic(){
      WbDeviceTag ds_r1 = wb_robot_get_device("distance_sensor1");
      WbDeviceTag ds_r2 = wb_robot_get_device("distance_sensor2");
 
@@ -175,10 +148,11 @@ int main(int argc, char **argv){
      times2=0;
      }
    }
-   void manual(){
+  void manual(){
 
         if(key == WB_KEYBOARD_UP){
           goRobot( wheel_1, wheel_2, wheel_3);
+
 
         }
         else if(key == WB_KEYBOARD_DOWN){
@@ -234,11 +208,6 @@ int main(int argc, char **argv){
         }
    }
 
-
-  /* main loop
-   * Perform simulation steps of TIME_STEP milliseconds
-    * and leave the loop when the simulation is over
-   */
   while (wb_robot_step(TIME_STEP) != -1) {
 
   double pos_final1, pos_final2,pos_final3; //posiciones finales
@@ -261,7 +230,6 @@ int main(int argc, char **argv){
           RPM_3= (pos_final3*60)/(2*PI);
           b3 = a3;
 
-
   /////////velocidad lineal del robot///////
   float radio=0.06; //radio de la llanta
   double linvel1, linvel2, linvel3;//velocidad lineal por llanta
@@ -270,7 +238,7 @@ int main(int argc, char **argv){
   linvel1=pos_final1*radio;
   linvel2=pos_final2*radio;
   linvel3=pos_final3*radio;
-  linvel_rob=(linvel1+linvel2+linvel3)/3;
+  linvel_rob=prom(linvel1,linvel2,linvel3);
 
   key = wb_keyboard_get_key();
 
@@ -299,23 +267,9 @@ int main(int argc, char **argv){
      tlinear_velocity %f \n",RPM_1,RPM_2,RPM_3,linvel_rob);
 
 
-    /*
-     * Read the sensors :
-     * Enter here functions to read sensor data, like:
-     *  double val = wb_distance_sensor_get_value(my_sensor);
-     */
-
-    /* Process sensor data here */
-
-    /*
-     * Enter here functions to send actuator commands, like:
-     * wb_differential_wheels_set_speed(100.0,100.0);
-     */
   };
 
-  /* Enter your cleanup code here */
 
-  /* This is necessary to cleanup webots resources */
   wb_robot_cleanup();
 
   return 0;

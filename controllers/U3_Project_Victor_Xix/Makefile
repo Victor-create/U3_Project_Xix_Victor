@@ -66,7 +66,7 @@
 ### VERBOSE = 1
 ###
 ###-----------------------------------------------------------------------------
-
+C_SOURCES = U3_Project_Victor_Xix.c promedio.c 
 ### Do not modify: this includes Webots global Makefile.include
 space :=
 space +=
